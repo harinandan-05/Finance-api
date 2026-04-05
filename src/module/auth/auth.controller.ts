@@ -1,5 +1,5 @@
 import { Request , Response} from 'express'
-import { loginUser } from './auth.service'
+import { loginUser, userRegister } from './auth.service'
 
 
 interface loginReq {
@@ -20,3 +20,17 @@ export const loginController = async (req:Request<{} ,{} , loginReq>,res:Respons
     }
 }
 
+
+export const registerController = async(req:Request,res:Response) => {
+    try{
+        const result  = await userRegister(req.body)
+
+        if(!result){
+            return res.status(400).json({msg:"failed in controller ,  not able to resolve the request"})
+        }
+
+        res.status(200).json({msg:"successfully registerd", result})
+    }catch(err){
+        return res.status(500).json({msg:"internal server error"})
+    }
+}
