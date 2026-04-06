@@ -13,7 +13,7 @@ const mongoose_1 = require("mongoose");
 const connectDb = function connection() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const url = "mongodb+srv://testuserharin:hari2005@cluster0.llwnf.mongodb.net/backend-api";
+            const url = process.env.MONGO_URI;
             yield (0, mongoose_1.connect)(url);
             console.log("mongodb connected successfully");
         }

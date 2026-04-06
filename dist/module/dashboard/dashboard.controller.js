@@ -8,24 +8,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
-const app_1 = __importDefault(require("./app"));
-const db_1 = __importDefault(require("./config/db"));
-const port = 3000;
-function server() {
-    return __awaiter(this, void 0, void 0, function* () {
-        app_1.default.listen(port, () => { console.log(`server up on: ${port}`); });
-    });
-}
-function db() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield (0, db_1.default)();
-    });
-}
-db();
-server();
+exports.dashboardController = void 0;
+const dashboard_service_1 = require("./dashboard.service");
+const dashboardController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userId = req.user.id;
+        const role = req.user.role;
+        const data = yield (0, dashboard_service_1.getDashboardSummary)(userId, role);
+        return res.status(200).json({
+            message: "Dashboard fetched successfully",
+            data
+        });
+    }
+    catch (err) {
+        return res.status(500).json({
+            message: err.message || "Failed to fetch dashboard"
+        });
+    }
+});
+exports.dashboardController = dashboardController;

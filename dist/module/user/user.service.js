@@ -12,20 +12,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
-const app_1 = __importDefault(require("./app"));
-const db_1 = __importDefault(require("./config/db"));
-const port = 3000;
-function server() {
-    return __awaiter(this, void 0, void 0, function* () {
-        app_1.default.listen(port, () => { console.log(`server up on: ${port}`); });
-    });
-}
-function db() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield (0, db_1.default)();
-    });
-}
-db();
-server();
+exports.updateUserRole = exports.getAllUsers = void 0;
+const usermodel_1 = __importDefault(require("../../models/usermodel"));
+const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
+    const users = yield usermodel_1.default.find().select("-password");
+    if (!users) {
+        throw new Error("No users found");
+    }
+    return users;
+});
+exports.getAllUsers = getAllUsers;
+const updateUserRole = (userId, role) => __awaiter(void 0, void 0, void 0, function* () {
+    const validRoles = ["viewer", "analyst", "admin"];
+    if (!validRoles.includes(role)) {
+        throw new Error("Invalid role");
+    }
+    const updatedUser = yield usermodel_1.default.findByIdAndUpdate(userId, { role }, { new: true }).select("-password");
+    if (!updatedUser) {
+        throw new Error("User not found");
+    }
+    return updatedUser;
+});
+exports.updateUserRole = updateUserRole;

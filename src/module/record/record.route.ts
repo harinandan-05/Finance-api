@@ -1,12 +1,53 @@
-import express from 'express'
-import { authMiddleware } from '../../middleware/auth.middleware'
-import { Rolemiddleware } from '../../middleware/role.middleware'
-import { deleteRecorController, getRecordbyidController, recordCreateControl, recordGetFilterController, updateRecordController } from './record.controller'
+import express from "express";
+import { authMiddleware } from "../../middleware/auth.middleware";
+import { Rolemiddleware } from "../../middleware/role.middleware";
+import {
+  recordCreateControl,
+  recordGetFilterController,
+  getRecordbyidController,
+  updateRecordController,
+  deleteRecorController
+} from "./record.controller";
 
-const recordRoute = express.Router()
+const recordRoute = express.Router();
 
-recordRoute.post('/create',authMiddleware,Rolemiddleware(['admin']),recordCreateControl)
-recordRoute.delete('/delete',authMiddleware,Rolemiddleware(["admin"]),deleteRecorController)
-recordRoute.get('/records',authMiddleware,Rolemiddleware(['admin','analyst']),recordGetFilterController)
-recordRoute.get('/records/:id',authMiddleware,Rolemiddleware(['admin','viewer','analyst']),getRecordbyidController)
-recordRoute.put('/update/:id',authMiddleware,Rolemiddleware(['admin']),updateRecordController)
+recordRoute.post(
+  "/",
+  authMiddleware,
+  Rolemiddleware(["admin", "analyst"]),
+  recordCreateControl
+);
+
+
+recordRoute.get(
+  "/",
+  authMiddleware,
+  Rolemiddleware(["admin", "analyst", "viewer"]),
+  recordGetFilterController
+);
+
+
+recordRoute.get(
+  "/:id",
+  authMiddleware,
+  Rolemiddleware(["admin", "analyst", "viewer"]),
+  getRecordbyidController
+);
+
+
+recordRoute.put(
+  "/:id",
+  authMiddleware,
+  Rolemiddleware(["admin", "analyst"]),
+  updateRecordController
+);
+
+
+recordRoute.delete(
+  "/:id",
+  authMiddleware,
+  Rolemiddleware(["admin", "analyst"]),
+  deleteRecorController
+);
+
+export default recordRoute;
