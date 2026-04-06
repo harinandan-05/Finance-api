@@ -10,6 +10,13 @@ interface Record {
     notes:string
 }
 
+interface Updated {
+    amount?:string,
+    type?:string,
+    catogory?:string,
+    notes?:string
+}
+
 export const CreateRecord = async(data:Record) => {
     if(!data || !data.userId){
         throw new Error("Missing required data")
@@ -82,7 +89,7 @@ export const deleteRecord = async(userId:string,recordId:string) => {
     return {message:"record deleted"}
 }
 
-export const updateRecord = async(userId:string,recordId:string) => {
+export const updateRecord = async(userId:string,recordId:string,data:Updated) => {
     
     const recordFind = await record.findById(recordId)
 
@@ -93,8 +100,21 @@ export const updateRecord = async(userId:string,recordId:string) => {
     if(recordFind.userId?.toString() !== userId) {
         throw new Error("unauthorized")
     }
+    const updatedData:any = {}
 
-    await record.findByIdAndUpdate(recordId)
+    if(data.amount !== undefined) updatedData.amount = data.amount;
+    if(data.catogory !== undefined) updatedData.catogory = data.catogory;
+    if(data.notes !== undefined) updatedData.notes = data.notes;
+    if(data.type !== undefined) updatedData.type = data.type;
 
-    return {message:"record updated"}
+    const updated = await record.findByIdAndUpdate(
+        recordId,
+        updatedData,
+        {
+            new:true,
+            runValidators:true
+        }
+    )
+
+    return {message:"record updated",updated}
 }
